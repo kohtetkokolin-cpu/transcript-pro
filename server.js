@@ -64,7 +64,7 @@ async function transcribeMediaBuffer(buffer, mimeType) {
   const ai = getAI();
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3-pro-preview',
+    model: 'gemini-2.5-pro-preview-05-06',
     contents: [{
       parts: [
         { inlineData: { data: buffer.toString('base64'), mimeType } },
@@ -145,7 +145,7 @@ app.post('/api/text-to-subtitles', devOnlyMiddleware, async (req, res) => {
   try {
     const ai = getAI();
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-2.0-flash',
       contents: `Convert text to SRT-style segments. JSON only.\n${req.body.text}`,
       config: { responseMimeType: "application/json" }
     });
@@ -162,7 +162,7 @@ app.post('/api/translate', devOnlyMiddleware, async (req, res) => {
   try {
     const ai = getAI();
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-2.0-flash',
       contents: `Translate to ${req.body.targetLang}: ${req.body.text}`
     });
     res.json({ translatedText: response.text });
