@@ -36,11 +36,7 @@ export const ThumbnailTool: React.FC<{
   }, [initialAsset]);
 
   const handleOpenKeyDialog = async () => {
-    const aistudio = (window as any).aistudio;
-    if (aistudio) {
-      await aistudio.openSelectKey();
-      setQuotaError(false);
-    }
+    window.open('https://aistudio.google.com/apikey', '_blank');
   };
 
   const handleGenerate = async () => {

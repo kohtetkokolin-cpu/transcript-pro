@@ -148,12 +148,6 @@ export const RecapTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const handleProductionExport = async () => {
     if (!result) return;
     
-    const aistudio = (window as any).aistudio;
-    const hasKey = await aistudio.hasSelectedApiKey();
-    if (!hasKey) {
-      await aistudio.openSelectKey();
-    }
-
     setIsExporting(true);
     setExportSuccess(false);
     setExportProgress(0);
@@ -182,10 +176,9 @@ export const RecapTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       setExportSuccess(true);
     } catch (err: any) {
       if (err.message && err.message.includes("Requested entity was not found")) {
-        setError("API Key selection was invalid or expired. Please re-select a paid API key.");
-        await (window as any).aistudio.openSelectKey();
+        setError("Veo model not found. Ensure your Gemini API key has Veo access enabled.");
       } else {
-        setError(err.message || "Video rendering failed. Ensure your selected API key has billing enabled.");
+        setError(err.message || "Video rendering failed. Ensure your API key has billing enabled for Veo.");
       }
     } finally {
       setIsExporting(false);
@@ -196,7 +189,7 @@ export const RecapTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     if (!renderedVideoUri) return;
     
     try {
-      const apiKey = process.env.API_KEY;
+      const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
       const response = await fetch(`${renderedVideoUri}&key=${apiKey}`);
       if (!response.ok) throw new Error("Storage fetch failed.");
       

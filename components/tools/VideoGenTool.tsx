@@ -62,20 +62,16 @@ export const VideoGenTool: React.FC<{
   }, [isGenerating]);
 
   const checkApiKey = async () => {
-    const aistudio = (window as any).aistudio;
-    const hasKey = await aistudio.hasSelectedApiKey();
-    if (!hasKey) {
-      await aistudio.openSelectKey();
-    }
+    // No-op: API key is managed in App.tsx header
   };
 
   const handleUplevelPrompt = async () => {
     if (!prompt.trim()) return;
     setIsUpleveling(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = new GoogleGenAI({ apiKey: (import.meta as any).env?.VITE_GEMINI_API_KEY || '' });
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-2.0-flash',
         contents: `You are a professional cinematic director. Take this simple video prompt and expand it into a detailed, high-quality, atmospheric description suitable for a high-end AI video model. Focus on lighting, camera movement, textures, and mood. Keep it under 60 words. 
         PROMPT: ${prompt}`,
       });
@@ -128,8 +124,7 @@ export const VideoGenTool: React.FC<{
       refreshHistory();
     } catch (err: any) {
       if (err.message && err.message.includes("Requested entity was not found")) {
-        setError("API Key project error. Please select a valid paid project key.");
-        await (window as any).aistudio.openSelectKey();
+        setError("Model not found. Ensure your Gemini API key has access to Veo. Check aistudio.google.com");
       } else {
         setError(err.message || "Synthesis engine fault.");
       }
